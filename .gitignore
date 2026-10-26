@@ -1,0 +1,28 @@
+# Dependencies
+
+node_modules/
+
+# Environment variables
+
+.env
+.env.*
+
+# Allow example environment config
+
+!.env.example
+
+# Uploaded files
+
+backend/uploads/*
+
+# Frontend build output
+
+frontend/frontend/dist/
+
+# Logs
+
+npm-debug.log*
+
+
+/backend/exiftool-13.59_64/
+/backend/exiftool-13.59_64.zip

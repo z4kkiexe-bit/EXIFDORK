@@ -1,0 +1,44 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 82px;
+  border-bottom: 1px solid #e6e8e1;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #20221e;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: #c8ee78;
+  color: #25291e;
+  font-family: 'DM Mono', monospace;
+  font-size: 17px;
+  letter-spacing: -0.08em;
+}
+
+.navbar-caption {
+  color: #8a8c84;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+
+@media (max-width: 480px) {
+  .navbar-caption {
+    font-size: 9px;
+  }
+}
