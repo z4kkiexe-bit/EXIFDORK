@@ -65,23 +65,26 @@
   position: relative;
   width: 100%;
   margin-top: 0;
+  padding-top: 0;
   z-index: 1;
-  transition: margin-top 500ms cubic-bezier(.2,.75,.25,1);
+  transition: padding-top 500ms cubic-bezier(.2,.75,.25,1);
 }
 
 .upload-stage-active {
-  margin-top: 105px;
+  padding-top: min(450px, 58vh);
 }
 
 .metadata-card {
   position: absolute;
   z-index: 1;
   left: 50%;
-  bottom: calc(100% + 28px);
+  top: 0;
   width: min(100%, 500px);
-  min-height: 190px;
+  height: min(420px, 55vh);
   padding: 17px 19px 18px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
   text-align: left;
   background: #fff;
   border: 1px solid #e2e6d8;
@@ -89,12 +92,17 @@
   box-shadow: 0 12px 35px rgb(41 47 29 / 7%);
   opacity: 0;
   transform: translate(-50%, 28px) scale(.96);
-  transform-origin: bottom center;
+  transform-origin: top center;
   pointer-events: none;
 }
 
+.metadata-card::-webkit-scrollbar {
+  display: none;
+}
+
 .upload-stage-active .metadata-card {
-  animation: card-arrive 650ms 650ms cubic-bezier(.2,.8,.2,1) forwards;
+  pointer-events: auto;
+  animation: card-arrive 650ms 500ms cubic-bezier(.2,.8,.2,1) forwards;
 }
 
 .metadata-card-top {
@@ -247,10 +255,18 @@
   color: #a6c65e;
 }
 
+ .metadata-results pre {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
 @keyframes card-arrive {
-  0% { opacity: 0; transform: translate(-50%, 28px) scale(.96); }
-  65% { opacity: 1; transform: translate(-50%, -3px) scale(1.01); }
-  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  from { opacity: 0; transform: translate(-50%, 20px) scale(.97); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
 @keyframes blob-rise {
@@ -279,8 +295,8 @@
   .home-page { padding: 0 22px; }
   .home-main { padding: 65px 0 80px; }
   .home-description { font-size: 14px; }
-  .upload-stage-active { margin-top: 100px; }
-  .metadata-card { bottom: calc(100% + 24px); }
+  .upload-stage-active { padding-top: min(420px, 55vh); }
+  .metadata-card { height: min(390px, 50vh); }
   .blob-left { left: 5%; }
   .blob-right { right: 5%; }
   .blob-one { --x: 80px; }
@@ -298,4 +314,356 @@
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
+}
+
+
+/* Stable metadata panel: fixed header, one scroll area, edge fades outside flow. */
+.metadata-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 17px 19px 0;
+  pointer-events: none;
+}
+
+.upload-stage-active .metadata-card {
+  pointer-events: auto;
+}
+
+.metadata-card-top {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.metadata-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 -19px;
+}
+
+.metadata-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 19px 18px;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+
+.metadata-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.metadata-placeholder {
+  padding-top: 18px;
+}
+
+.metadata-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 30px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.metadata-edge-top {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 98%) 0%,
+    rgb(255 255 255 / 72%) 35%,
+    rgb(255 255 255 / 0%) 100%
+  );
+}
+
+.metadata-edge-bottom {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgb(255 255 255 / 98%) 0%,
+    rgb(255 255 255 / 72%) 35%,
+    rgb(255 255 255 / 0%) 100%
+  );
+}
+
+.metadata-edge.is-visible {
+  opacity: 1;
+}
+
+.metadata-results pre {
+  max-height: none;
+  overflow: visible;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-bottom: 0;
+}
+
+@media (max-width: 560px) {
+  .metadata-card {
+    padding: 15px 16px 0;
+  }
+
+  .metadata-body {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
+  .metadata-scroll {
+    padding: 0 16px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metadata-edge {
+    transition: none;
+  }
+}
+
+
+/* Centered result row: metadata and GPS preview share the available space. */
+.home-main {
+  width: min(100%, 1100px);
+}
+
+.upload-stage {
+  width: 100%;
+  padding-top: 0;
+}
+
+.upload-stage-active {
+  padding-top: 0;
+}
+
+.result-cards {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  height: 0;
+  opacity: 0;
+  overflow: visible;
+  pointer-events: none;
+  transition: opacity 320ms ease, margin-bottom 400ms ease;
+}
+
+.result-cards-active {
+  height: auto;
+  min-height: min(420px, 55vh);
+  margin-bottom: 24px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.metadata-card {
+  position: relative;
+  top: auto;
+  left: auto;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  max-width: 500px;
+  height: min(420px, 55vh);
+  margin: 0;
+  opacity: 1;
+  transform: none;
+  transform-origin: center;
+  animation: result-card-enter 500ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.result-cards-active:not(.gps-mode-active) .metadata-card {
+  flex: 0 1 500px;
+}
+
+.gps-mode-active {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+}
+
+.gps-mode-active .metadata-card {
+  width: 100%;
+  max-width: none;
+}
+
+.map-preview-card {
+  min-width: 0;
+  height: min(420px, 55vh);
+  padding: 17px 18px 18px;
+  border: 1px solid #e2e6d8;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 35px rgb(41 47 29 / 7%);
+  text-align: left;
+  animation: result-card-enter 520ms 80ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.map-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #eef0e9;
+}
+
+.gps-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #8a8d83;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+
+.gps-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c6c8bf;
+}
+
+.gps-found {
+  color: #6f8d35;
+}
+
+.gps-found .gps-status-dot {
+  background: #a4d84b;
+}
+
+.map-preview-image {
+  position: relative;
+  display: block;
+  height: 230px;
+  margin-top: 15px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #edf0e7;
+  color: #fff;
+}
+
+.map-preview-image iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.map-open-label {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  background: rgb(35 38 29 / 86%);
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .04em;
+}
+
+.gps-location-text {
+  padding-top: 13px;
+}
+
+.gps-location-label {
+  color: #8a8d83;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
+}
+
+.gps-location-text p {
+  margin: 5px 0 4px;
+  color: #30332b;
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.gps-location-hint {
+  color: #92948d;
+  font-size: 10px;
+}
+
+.gps-empty-state {
+  display: flex;
+  min-height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.gps-empty-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid #e7e9e1;
+  border-radius: 50%;
+  color: #7d9e39;
+  font-size: 24px;
+}
+
+.gps-empty-state h3 {
+  margin: 14px 0 6px;
+  color: #383b32;
+  font-size: 14px;
+}
+
+.gps-empty-state p {
+  max-width: 250px;
+  margin: 0;
+  color: #85877f;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+@keyframes result-card-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  .gps-mode-active {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .result-cards-active {
+    min-height: 0;
+  }
+
+  .metadata-card,
+  .map-preview-card {
+    height: min(420px, 60vh);
+  }
+
+  .map-preview-image {
+    height: 210px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metadata-card,
+  .map-preview-card {
+    animation: none;
+  }
+}
+
+.upload-stage-active .result-cards-active .metadata-card {
+  animation: result-card-enter 500ms cubic-bezier(.2,.8,.2,1) both;
 }

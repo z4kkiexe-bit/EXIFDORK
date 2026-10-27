@@ -2,18 +2,28 @@ import { useRef, useState } from 'react'
 
 import './FileUpload.css'
 
-function FileUpload({ selectedFile, onFileSelect }) {
+function FileUpload({ selectedFile, onFileSelect, onInspect, mode, onModeChange }) {
   const inputRef = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  function handleDrop(event) {
-    event.preventDefault()
-    setIsDragging(false)
-    onFileSelect(event.dataTransfer.files?.[0])
+    function handleDrop(event) {
+      event.preventDefault()
+      setIsDragging(false)
+
+      const oFile = event.dataTransfer.files?.[0]
+      if (!oFile) return
+
+      onFileSelect(oFile)
+      onInspect(oFile)
   }
 
   function handleChange(event) {
-    onFileSelect(event.target.files?.[0])
+    const oFile = event.target.files?.[0]
+
+    if (!oFile) return
+
+    onFileSelect(oFile)
+    onInspect(oFile)
     event.target.value = ''
   }
 
@@ -32,6 +42,19 @@ function FileUpload({ selectedFile, onFileSelect }) {
       onDrop={handleDrop}
       aria-label="Upload a file for metadata inspection"
     >
+      <div className="upload-mode-control">
+        <label htmlFor="doxxer-mode">MODE</label>
+        <select
+          id="doxxer-mode"
+          value={mode}
+          onChange={(event) => onModeChange(event.target.value)}
+          aria-label="Choose metadata preview mode"
+        >
+          <option value="standard">Standard</option>
+          <option value="gps">Auto GPS</option>
+        </select>
+      </div>
+
       <input
         ref={inputRef}
         className="file-input-hidden"

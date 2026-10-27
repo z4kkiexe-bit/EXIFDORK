@@ -90,3 +90,62 @@
 .file-name {
   max-width: 100%;
 }
+
+
+.file-upload {
+  position: relative;
+}
+
+.upload-mode-control {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 4;
+}
+
+.upload-mode-control label {
+  color: #85887d;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
+}
+
+.upload-mode-control select {
+  min-height: 30px;
+  max-width: 120px;
+  padding: 0 26px 0 10px;
+  border: 1px solid #e3e6dc;
+  border-radius: 7px;
+  background: #fbfcf8;
+  color: #414438;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.upload-mode-control select:focus-visible {
+  outline: 2px solid #a8ca61;
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .upload-mode-control {
+    top: 10px;
+    right: 10px;
+  }
+
+  .upload-mode-control label {
+    display: none;
+  }
+
+  .upload-mode-control select {
+    max-width: 105px;
+  }
+
+  .file-upload {
+    padding-top: 54px;
+  }
+}
