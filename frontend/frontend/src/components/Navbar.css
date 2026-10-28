@@ -3,14 +3,14 @@
   align-items: center;
   justify-content: space-between;
   min-height: 82px;
-  border-bottom: 1px solid #e6e8e1;
+  border-bottom: 1px solid var(--border);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #20221e;
+  color: var(--text);
   text-decoration: none;
   font-size: 13px;
   font-weight: 800;
@@ -23,16 +23,16 @@
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: #c8ee78;
-  color: #25291e;
-  font-family: 'DM Mono', monospace;
+  background: var(--accent-soft);
+  color: var(--on-accent);
+  font-family: 'Google Sans Code', ui-monospace, Menlo, monospace;
   font-size: 17px;
   letter-spacing: -0.08em;
 }
 
 .navbar-caption {
-  color: #8a8c84;
-  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  font-family: 'Google Sans Code', ui-monospace, Menlo, monospace;
   font-size: 10px;
   letter-spacing: 0.07em;
 }
@@ -40,5 +40,117 @@
 @media (max-width: 480px) {
   .navbar-caption {
     font-size: 9px;
+  }
+}
+
+/* Doxxer wordmark + logo mark */
+.brand {
+  color: var(--text);
+}
+
+.brand-mark {
+  background: var(--accent-soft);
+  color: #fff;
+}
+
+.brand-mark svg {
+  width: 25px;
+  height: 20px;
+  stroke: #fff;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brand-mark .mark-lens,
+.brand-mark .mark-handle {
+  stroke-width: 1.9;
+}
+
+.brand-word {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.brand-o {
+  display: inline-block;
+  width: 0.92em;
+  height: 0.92em;
+  margin: 0 0.03em;
+  vertical-align: -0.1em;
+  stroke: var(--accent-text);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+/* Right side: theme switch + caption */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.theme-switch {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.theme-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-btn:hover {
+  color: var(--text);
+}
+
+.theme-btn.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.theme-btn:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .navbar-caption {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .theme-btn span {
+    display: none;
+  }
+
+  .theme-btn {
+    padding: 0 9px;
   }
 }

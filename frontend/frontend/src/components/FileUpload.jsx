@@ -52,6 +52,7 @@ function FileUpload({ selectedFile, onFileSelect, onInspect, mode, onModeChange 
         >
           <option value="standard">Standard</option>
           <option value="gps">Auto GPS</option>
+          <option value="date">Auto Date</option>
         </select>
       </div>
 

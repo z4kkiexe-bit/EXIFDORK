@@ -3,15 +3,15 @@
   flex-direction: column;
   align-items: center;
   padding: 35px 24px 30px;
-  border: 1px dashed #cfd2c7;
+  border: 1px dashed var(--border-dash);
   border-radius: 13px;
-  background: #fff;
+  background: var(--surface);
   transition: border-color 160ms ease, background-color 160ms ease;
 }
 
 .file-upload.is-dragging {
-  border-color: #829f43;
-  background: #f7fbeF;
+  border-color: var(--accent);
+  background: var(--drag-bg);
 }
 
 .file-input-hidden {
@@ -24,15 +24,15 @@
   width: 45px;
   height: 45px;
   margin-bottom: 17px;
-  border: 1px solid #e7e9e1;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  background: #fafbf8;
+  background: var(--surface-alt);
 }
 
 .upload-icon svg {
   width: 22px;
   height: 22px;
-  stroke: #687b45;
+  stroke: var(--accent-text);
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -41,7 +41,7 @@
 .upload-title {
   max-width: 100%;
   margin: 0;
-  color: #30322d;
+  color: var(--text);
   font-size: 14px;
   font-weight: 700;
   overflow-wrap: anywhere;
@@ -51,7 +51,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #6f8d35;
+  color: var(--accent-text);
   font-weight: 800;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -59,7 +59,7 @@
 
 .upload-subtitle {
   margin: 8px 0 19px;
-  color: #92948d;
+  color: var(--faint);
   font-size: 12px;
 }
 
@@ -72,7 +72,7 @@
   padding: 0 17px;
   border: 0;
   border-radius: 7px;
-  background: #252720;
+  background: var(--btn-bg);
   color: #fff;
   font-size: 12px;
   font-weight: 700;
@@ -80,7 +80,7 @@
 }
 
 .browse-button:hover {
-  background: #424638;
+  background: var(--btn-hover);
 }
 
 .browse-button:active {
@@ -107,8 +107,8 @@
 }
 
 .upload-mode-control label {
-  color: #85887d;
-  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  font-family: 'Google Sans Code', ui-monospace, Menlo, monospace;
   font-size: 9px;
   letter-spacing: .1em;
 }
@@ -117,17 +117,17 @@
   min-height: 30px;
   max-width: 120px;
   padding: 0 26px 0 10px;
-  border: 1px solid #e3e6dc;
+  border: 1px solid var(--border);
   border-radius: 7px;
-  background: #fbfcf8;
-  color: #414438;
+  background: var(--surface-alt);
+  color: var(--text);
   font: inherit;
   font-size: 11px;
   cursor: pointer;
 }
 
 .upload-mode-control select:focus-visible {
-  outline: 2px solid #a8ca61;
+  outline: 2px solid var(--accent-bright);
   outline-offset: 2px;
 }
 
