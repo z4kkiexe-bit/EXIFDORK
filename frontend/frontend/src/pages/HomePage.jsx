@@ -500,7 +500,7 @@ function HomePage() {
           <div className={`result-cards ${selectedFile ? 'result-cards-active' : ''} ${hasSidePanel ? 'gps-mode-active' : ''}`}>
           <section className="metadata-card" aria-live="polite">
             <div className="metadata-card-top">
-              <span className="metadata-card-label">EXIFDORK / ANALYSIS</span>
+              <span className="metadata-card-label">DOXXER / ANALYSIS</span>
               <span className="processing-indicator">
                 <span className="processing-dot" />
                 {isProcessing ? 'PROCESSING' : 'READY'}
@@ -739,7 +739,7 @@ function HomePage() {
       </main>
 
       <footer className="home-footer">
-        <span>EXIFDORK <span className="footer-dot">/</span> BUILT FOR THE CURIOUS</span>
+        <span>DOXXER <span className="footer-dot">/</span> BUILT FOR THE CURIOUS</span>
         <span>METADATA, MADE VISIBLE.</span>
       </footer>
     </div>

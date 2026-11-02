@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
-import './LoginPage.css'
+import './RegisterPage.css'
 
 /* ------------------------------------------------------------------ *
  *  CONFIG
@@ -9,13 +9,16 @@ import './LoginPage.css'
  *    The SECRET key must only ever live on your backend.
  *    In dev we fall back to Cloudflare's "always passes" test key.
  * ------------------------------------------------------------------ */
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3888'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3999'
 const SITE_KEY =
   import.meta.env.VITE_TURNSTILE_SITE_KEY ||
   (import.meta.env.DEV ? '1x00000000000000000000AA' : '')
 
 const TURNSTILE_SRC =
   'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+
+// Same rule the backend must enforce again (never trust the browser alone).
+const USERNAME_PATTERN = /^[a-zA-Z0-9_.-]{3,24}$/
 
 // Loads the Cloudflare script once, no matter how many times the page mounts.
 function loadTurnstile() {
@@ -58,48 +61,20 @@ function useThemeName() {
   return sTheme
 }
 
-function LoginPage() {
+function RegisterPage({ onRegistered }) {
   const sTheme = useThemeName()
   const turnstileBoxRef = useRef(null)
   const widgetIdRef = useRef(null)
 
   // ---- USER INPUT LIVES HERE ------------------------------------------
-  const [oForm, setForm] = useState({
-    identifier: '', // email or username
-    password: '',
-    remember: false // "keep me signed in"
-  })
+  const [sUsername, setUsername] = useState('')
   // ---------------------------------------------------------------------
 
   const [sToken, setToken] = useState('') // Turnstile token, one use only
-  const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [sError, setError] = useState(null)
 
-  function updateField(sName, value) {
-    setForm((oPrev) => ({ ...oPrev, [sName]: value }))
-  }
-
-  // 1) "Am I already logged in?" -> ask the backend, the browser attaches the cookie.
-  //    Your backend must answer 200 when the cookie is valid and 401 when it is not.
-  useEffect(() => {
-    const oController = new AbortController()
-
-    fetch(`${API_URL}/api/me`, {
-      credentials: 'include',
-      signal: oController.signal
-    })
-      .then((oResponse) => {
-        if (oResponse.ok) window.location.replace('/')
-      })
-      .catch(() => {
-        // backend not running yet, or not logged in: just show the form
-      })
-
-    return () => oController.abort()
-  }, [])
-
-  // 2) Render the Cloudflare widget (re-render when the theme changes).
+  // Render the Cloudflare widget (re-render when the theme changes).
   useEffect(() => {
     if (!SITE_KEY) {
       setError('Missing VITE_TURNSTILE_SITE_KEY. Add it to your .env file.')
@@ -148,10 +123,10 @@ function LoginPage() {
 
     if (isSubmitting) return
 
-    const sIdentifier = oForm.identifier.trim()
+    const sValue = sUsername.trim()
 
-    if (!sIdentifier || !oForm.password) {
-      setError('Enter your email or username and your password.')
+    if (!USERNAME_PATTERN.test(sValue)) {
+      setError('Use 3 to 24 characters: letters, numbers, dot, underscore or dash.')
       return
     }
 
@@ -165,23 +140,20 @@ function LoginPage() {
 
     try {
       // ================= BACKEND HOOK =================
-      // POST {API_URL}/api/login
+      // POST {API_URL}/api/register
       // JSON body:
-      //   identifier     string   email or username
-      //   password       string   plain text over HTTPS; the backend hashes/compares it
-      //   remember       boolean  true = long-lived cookie, false = session cookie
-      //   turnstileToken string   verify this on the backend with your SECRET key
-      // Success: 200 + a Set-Cookie header (the browser stores it for you).
-      // Failure: 4xx + JSON { "error": "message to show the user" }
+      //   username        string   the value typed above
+      //   turnstileToken  string   verify this on the backend with your SECRET key
+      // Success: 200/201 + a Set-Cookie header (the browser stores it for you).
+      // Taken:   409 + JSON { "error": "That username is already taken." }
+      // Other:   4xx + JSON { "error": "message to show the user" }
       // ================================================
-      const oResponse = await fetch(`${API_URL}/api/login`, {
+      const oResponse = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // required, or the browser ignores Set-Cookie
         body: JSON.stringify({
-          identifier: sIdentifier,
-          password: oForm.password,
-          remember: oForm.remember,
+          username: sValue,
           turnstileToken: sToken
         })
       })
@@ -189,10 +161,15 @@ function LoginPage() {
       const oData = await oResponse.json().catch(() => ({}))
 
       if (!oResponse.ok) {
-        throw new Error(oData.error || 'Login failed. Please try again.')
+        throw new Error(
+          oData.error ||
+            (oResponse.status === 409
+              ? 'That username is already taken.'
+              : 'Registration failed. Please try again.')
+        )
       }
 
-      window.location.assign('/')
+      onRegistered?.() // App switches to the main page, no reload needed
     } catch (oError) {
       setError(
         oError instanceof TypeError
@@ -206,104 +183,68 @@ function LoginPage() {
   }
 
   const canSubmit = Boolean(sToken) && !isSubmitting
-
+  console.log({
+  sToken,
+  canSubmit,
+  isSubmitting
+  })
+  
   return (
-    <div className="login-page">
+    <div className="register-page">
       <Navbar />
 
-      <main className="login-main">
-        <div className="login-intro">
-          <div className="login-eyebrow">
-            <span className="login-status-dot" />
-            SIGN IN
+      <main className="register-main">
+        <div className="register-intro">
+          <div className="register-eyebrow">
+            <span className="register-status-dot" />
+            GET STARTED
           </div>
           <h1>
             Welcome to <span>Doxxer</span>
           </h1>
-          <p className="login-description">Sign in to continue.</p>
+          <p className="register-description">Pick a username to continue.</p>
         </div>
 
-        <form className="login-card" onSubmit={handleSubmit} noValidate>
-          <div className="login-field">
-            <label htmlFor="login-identifier">Email or username</label>
+        <form className="register-card" onSubmit={handleSubmit} noValidate>
+          <div className="register-field">
+            <label htmlFor="register-username">Username</label>
             <input
-              id="login-identifier"
-              name="identifier"
+              id="register-username"
+              name="username"
               type="text"
               autoComplete="username"
               autoCapitalize="none"
               spellCheck="false"
-              value={oForm.identifier}
-              onChange={(event) => updateField('identifier', event.target.value)}
+              maxLength={24}
+              value={sUsername}
+              onChange={(event) => setUsername(event.target.value)}
               aria-invalid={Boolean(sError)}
+              aria-describedby="register-username-hint"
               required
             />
+            <p className="register-hint" id="register-username-hint">
+              3 to 24 characters. Letters, numbers, dot, underscore, dash.
+            </p>
           </div>
 
-          <div className="login-field">
-            <label htmlFor="login-password">Password</label>
-            <div className="login-password">
-              <input
-                id="login-password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                value={oForm.password}
-                onChange={(event) => updateField('password', event.target.value)}
-                aria-invalid={Boolean(sError)}
-                required
-              />
-              <button
-                type="button"
-                className="login-eye"
-                onClick={() => setShowPassword((bValue) => !bValue)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                aria-pressed={showPassword}
-              >
-                {showPassword ? (
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M3 3l18 18M10.6 6.2A9.6 9.6 0 0 1 12 6c5 0 8.5 4.2 9.5 6-.4.8-1.3 2.1-2.7 3.3M6.6 7.6C4.5 9 3.3 10.9 2.5 12c1 1.8 4.5 6 9.5 6 1.5 0 2.8-.4 4-1M9.9 10a3 3 0 0 0 4.1 4.1" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M2.5 12C3.5 10.2 7 6 12 6s8.5 4.2 9.5 6c-1 1.8-4.5 6-9.5 6s-8.5-4.2-9.5-6z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
+          <div className="register-turnstile" ref={turnstileBoxRef} />
 
-          <label className="login-remember">
-            <input
-              type="checkbox"
-              checked={oForm.remember}
-              onChange={(event) => updateField('remember', event.target.checked)}
-            />
-            <span>
-              Keep me signed in
-              <small>Stay signed in on this device.</small>
-            </span>
-          </label>
-
-          <div className="login-turnstile" ref={turnstileBoxRef} />
-
-          <p className="login-error" role="alert" aria-live="assertive">
+          <p className="register-error" role="alert" aria-live="assertive">
             {sError}
           </p>
 
-          <button className="login-submit" type="submit" disabled={!canSubmit}>
-            {isSubmitting ? 'Signing in…' : 'Sign in'}
+          <button className="register-submit" type="submit" disabled={!canSubmit}>
+            {isSubmitting ? 'Registering…' : 'Register'}
           </button>
         </form>
       </main>
 
-      <footer className="login-footer">
-        <span>DOXXER <span className="login-footer-dot">/</span> BUILT FOR THE CURIOUS</span>
+      <footer className="register-footer">
+        <span>DOXXER <span className="register-footer-dot">/</span> BUILT FOR THE CURIOUS</span>
         <span>METADATA, MADE VISIBLE.</span>
       </footer>
     </div>
   )
 }
 
-export { LoginPage }
+export { RegisterPage }
