@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 
 const app = express()
-const viPort = 3999
+const viPort =  process.env.PORT || 3999
 const oMongoClient = new MongoClient(process.env.MONGODB_URI)
 const db = oMongoClient.db("DoxxerRegist")
 const collection = db.collection("Registers")
