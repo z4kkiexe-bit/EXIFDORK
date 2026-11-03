@@ -101,7 +101,7 @@ app.post("/api/metadata", oUpload.single("file"), (req, res) => {
             res.status(500).json({
                 error: "failed to parse metadata"
             })
-        } finally {fg
+        } finally {
             await deleteFile(req)
         }
     })
