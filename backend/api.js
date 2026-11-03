@@ -32,7 +32,7 @@ async function connectMongoDB() {
 
 try {
     await connectMongoDB()
-    app.listen(viPort, () => {
+    app.listen(viPort, "0.0.0.0", () => {
         console.log(`Server running on port ${viPort}`)
     })
 } catch(error) {
