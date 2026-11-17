@@ -110,7 +110,7 @@ async function requireSession(req, res, next) {
         req.user = oSession
         next()
     } catch (error) {
-        console.error(error)
+        console.error("Registration error:", error.response?.data || error)
         res.status(500).json({ error: "Internal server error" })
     }
 }
