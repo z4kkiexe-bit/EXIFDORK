@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './Navbar.css'
 
 const THEME_KEY = 'doxxer-theme'
@@ -15,6 +15,20 @@ function getInitialTheme() {
 
 function Navbar() {
   const [sTheme, setTheme] = useState(getInitialTheme)
+  const infoDialogRef = useRef(null)
+
+  function openInfo() {
+    infoDialogRef.current?.showModal()
+  }
+
+  function closeInfo() {
+    infoDialogRef.current?.close()
+  }
+
+  // clicks on the dark backdrop land on the <dialog> itself
+  function handleInfoClick(event) {
+    if (event.target === event.currentTarget) closeInfo()
+  }
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', sTheme)
@@ -49,6 +63,20 @@ function Navbar() {
       </a>
 
       <div className="navbar-right">
+        <button
+          type="button"
+          className="info-btn"
+          onClick={openInfo}
+          aria-haspopup="dialog"
+          aria-label="How to use Doxxer"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5M12 8h.01" />
+          </svg>
+          <span>How to use</span>
+        </button>
+
         <div className="theme-switch" role="group" aria-label="Color theme">
           <button
             type="button"
@@ -77,6 +105,82 @@ function Navbar() {
 
         <span className="navbar-caption">A LITTLE MORE THAN A FILE</span>
       </div>
+
+      <dialog
+        ref={infoDialogRef}
+        className="info-dialog"
+        aria-labelledby="info-title"
+        onClick={handleInfoClick}
+      >
+        <div className="info-panel">
+          <div className="info-head">
+            <h2 id="info-title">How to use Doxxer</h2>
+            <button
+              type="button"
+              className="info-close"
+              onClick={closeInfo}
+              aria-label="Close"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+
+          <p className="info-lead">
+            Doxxer reads the hidden metadata inside a file and shows it in a readable way.
+          </p>
+
+          <ol className="info-steps">
+            <li>
+              Drop a file on the upload box, or click <strong>Choose file</strong>.
+              Supported: JPG, PNG, WebP and PDF, up to 10 MB.
+            </li>
+            <li>Pick a <strong>mode</strong> in the dropdown (see below).</li>
+            <li>
+              Read the result. Click <strong>Refine metadata</strong> for a cleaner,
+              grouped view, and click it again to go back to the raw data.
+            </li>
+            <li>
+              Click <strong>Remove file</strong> to clear everything and start over.
+            </li>
+          </ol>
+
+          <h3>Modes</h3>
+          <dl className="info-modes">
+            <div>
+              <dt>Standard</dt>
+              <dd>Shows all the raw metadata found in the file.</dd>
+            </div>
+            <div>
+              <dt>Auto GPS</dt>
+              <dd>
+                If the file has GPS coordinates, shows the location on a map with a
+                link to Google Maps.
+              </dd>
+            </div>
+            <div>
+              <dt>Auto Date</dt>
+              <dd>Shows when the file was taken or created, plus any other dates found.</dd>
+            </div>
+          </dl>
+
+          <div className="info-note" role="note">
+            <strong>Auto GPS works best on a laptop or PC</strong>
+            <p>
+              Android removes the location from photos you pick from the gallery
+              (Android 10 and up) before the browser can read them. On a phone, GPS can
+              show as missing even when the photo has it. Date, camera model and most
+              other metadata usually stay.
+            </p>
+            <p>
+              For GPS, send the photo to a laptop (cable, Google Drive, and so on) and
+              upload it there. Photos sent through chat apps like WhatsApp or Telegram
+              usually have their metadata removed by the app, so use the original file.
+            </p>
+          </div>
+        </div>
+      </dialog>
     </header>
   )
 }

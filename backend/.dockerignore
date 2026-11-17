@@ -1,0 +1,10 @@
+node_modules
+.env
+.env.*
+!.env.example
+
+uploads
+exiftool-13.59_64
+exiftool-13.59_64.zip
+
+npm-debug.log*

@@ -1,20 +1,19 @@
 import { useRef, useState } from 'react'
-
 import './FileUpload.css'
 
 function FileUpload({ selectedFile, onFileSelect, onInspect, mode, onModeChange }) {
   const inputRef = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
 
-    function handleDrop(event) {
-      event.preventDefault()
-      setIsDragging(false)
+  function handleDrop(event) {
+    event.preventDefault()
+    setIsDragging(false)
 
-      const oFile = event.dataTransfer.files?.[0]
-      if (!oFile) return
+    const oFile = event.dataTransfer.files?.[0]
+    if (!oFile) return
 
-      onFileSelect(oFile)
-      onInspect(oFile)
+    onFileSelect(oFile)
+    onInspect(oFile)
   }
 
   function handleChange(event) {

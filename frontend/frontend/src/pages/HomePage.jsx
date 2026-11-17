@@ -3,6 +3,10 @@ import Navbar from '../components/Navbar.jsx'
 import FileUpload from '../components/FileUpload.jsx'
 import './HomePage.css'
 
+// Local dev: backend on 3999. Production: empty = same address as the site (/api is proxied).
+// Set VITE_API_URL only if the backend lives on a different address.
+const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3999' : '')
+
 function parseGpsCoordinate(value, reference) {
   if (value === null || value === undefined) {
     return null
@@ -433,10 +437,11 @@ function HomePage() {
 
     try {
       const oResponse = await fetch(
-        "http://localhost:3888/api/metadata",
+        `/api/metadata`,
         {
           method: "POST",
           body: oFormData,
+          credentials: "include", // sends the session cookie
           signal: oController.signal
         }
       )

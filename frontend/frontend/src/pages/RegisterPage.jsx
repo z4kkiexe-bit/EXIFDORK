@@ -9,7 +9,9 @@ import './RegisterPage.css'
  *    The SECRET key must only ever live on your backend.
  *    In dev we fall back to Cloudflare's "always passes" test key.
  * ------------------------------------------------------------------ */
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3999'
+// Local dev: backend on 3999. Production: empty = same address as the site (/api is proxied).
+// Set VITE_API_URL only if the backend lives on a different address.
+const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3999' : '')
 const SITE_KEY =
   import.meta.env.VITE_TURNSTILE_SITE_KEY ||
   (import.meta.env.DEV ? '1x00000000000000000000AA' : '')
@@ -148,7 +150,7 @@ function RegisterPage({ onRegistered }) {
       // Taken:   409 + JSON { "error": "That username is already taken." }
       // Other:   4xx + JSON { "error": "message to show the user" }
       // ================================================
-      const oResponse = await fetch(`${API_URL}/api/register`, {
+      const oResponse = await fetch(`/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // required, or the browser ignores Set-Cookie
@@ -183,12 +185,7 @@ function RegisterPage({ onRegistered }) {
   }
 
   const canSubmit = Boolean(sToken) && !isSubmitting
-  console.log({
-  sToken,
-  canSubmit,
-  isSubmitting
-  })
-  
+
   return (
     <div className="register-page">
       <Navbar />
