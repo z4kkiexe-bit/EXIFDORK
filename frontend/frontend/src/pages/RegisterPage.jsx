@@ -150,7 +150,7 @@ function RegisterPage({ onRegistered }) {
       // Taken:   409 + JSON { "error": "That username is already taken." }
       // Other:   4xx + JSON { "error": "message to show the user" }
       // ================================================
-      const oResponse = await fetch(`/api/register`, {
+      const oResponse = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // required, or the browser ignores Set-Cookie
