@@ -437,7 +437,7 @@ function HomePage() {
 
     try {
       const oResponse = await fetch(
-        `/api/metadata`,
+        `${API_URL}/api/metadata`,
         {
           method: "POST",
           body: oFormData,
