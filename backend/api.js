@@ -326,6 +326,8 @@ try {
             error.message
         )
     }
+    console.log("PORT:", process.env.PORT)
+    console.log("viPort:", viPort)
 
     app.listen(viPort, "0.0.0.0", () => {
         console.log(`Server running on port ${viPort}`)
