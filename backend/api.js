@@ -27,7 +27,7 @@ import { randomUUID } from "node:crypto"
  *                   ./exiftool-13.59_64/exiftool.exe
  * ------------------------------------------------------------------ */
 const vsIsProduction = process.env.NODE_ENV === "production"
-const viPort = process.env.PORT || 3999
+const viPort = process.env.PORT || 5000
 const asFrontendOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
     .split(",")
     .map((sOrigin) => sOrigin.trim())
