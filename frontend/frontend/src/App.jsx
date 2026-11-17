@@ -7,6 +7,7 @@ import './App.css'
 // Dev only: set VITE_SKIP_AUTH=true in .env to see the main page without a backend.
 // (Uploads need a valid session, so inspecting a file still requires registering.)
 const SKIP_AUTH = import.meta.env.DEV && import.meta.env.VITE_SKIP_AUTH === 'true'
+const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3999' : '')
 
 function App() {
   // 'checking' -> asking the backend, 'out' -> show register, 'in' -> show the app
@@ -20,7 +21,7 @@ function App() {
 
     const oController = new AbortController()
 
-    fetch(`/api/me`, {
+    fetch(`${API_URL}/api/me`, {
       credentials: 'include',
       signal: oController.signal
     })
